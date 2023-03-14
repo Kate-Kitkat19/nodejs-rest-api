@@ -1,4 +1,28 @@
+const { Schema, model } = require("mongoose");
+const handleError = require("../helpers/ErrorHandler");
 const Joi = require("joi");
+
+const contactSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Set name for contact"],
+    },
+    email: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { versionKey: false, timestamps: true }
+);
+
+contactSchema.post("save", handleError);
 
 const contactsSchema = Joi.object({
   id: Joi.string().optional(),
@@ -64,6 +88,17 @@ const contactsSchema = Joi.object({
       });
       return errors;
     }),
+  favorite: Joi.boolean().required(),
 });
 
-module.exports = contactsSchema;
+const updateFavSchema = Joi.object({
+  favorite: Joi.boolean().required(),
+});
+
+const Contact = model("contact", contactSchema);
+
+module.exports = {
+  contactsSchema,
+  updateFavSchema,
+  Contact,
+};
