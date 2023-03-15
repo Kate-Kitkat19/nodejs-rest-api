@@ -1,4 +1,28 @@
+const { Schema, model } = require("mongoose");
+const {handleError} = require("../helpers");
 const Joi = require("joi");
+
+const contactSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Set name for contact"],
+    },
+    email: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { versionKey: false, timestamps: true }
+);
+
+contactSchema.post("save", handleError);
 
 const contactsSchema = Joi.object({
   id: Joi.string().optional(),
@@ -64,6 +88,30 @@ const contactsSchema = Joi.object({
       });
       return errors;
     }),
+  favorite: Joi.boolean().optional(),
 });
 
-module.exports = contactsSchema;
+const updateFavSchema = Joi.object({
+  favorite: Joi.boolean()
+    .required()
+    .error((errors) => {
+      errors.forEach((err) => {
+        switch (err.code) {
+          case "any.empty":
+            err.message = `Missing required favorite field`;
+            break;
+          default:
+            break;
+        }
+      });
+      return errors;
+    }),
+});
+
+const Contact = model("contact", contactSchema);
+
+module.exports = {
+  contactsSchema,
+  updateFavSchema,
+  Contact,
+};
