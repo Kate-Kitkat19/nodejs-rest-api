@@ -88,11 +88,24 @@ const contactsSchema = Joi.object({
       });
       return errors;
     }),
-  favorite: Joi.boolean().required(),
+  favorite: Joi.boolean().optional(),
 });
 
 const updateFavSchema = Joi.object({
-  favorite: Joi.boolean().required(),
+  favorite: Joi.boolean()
+    .required()
+    .error((errors) => {
+      errors.forEach((err) => {
+        switch (err.code) {
+          case "any.empty":
+            err.message = `Missing required favorite field`;
+            break;
+          default:
+            break;
+        }
+      });
+      return errors;
+    }),
 });
 
 const Contact = model("contact", contactSchema);
