@@ -1,8 +1,9 @@
-const contactModel = require("../../models");
+const { contactModel } = require("../../models");
 const { errorCatcher } = require("../../helpers");
 
 const getAllContacts = async (req, res) => {
-  const result = await contactModel.Contact.find({});
+  const { _id: owner } = req.user;
+  const result = await contactModel.Contact.find({ owner });
   res.json(result);
 };
 
