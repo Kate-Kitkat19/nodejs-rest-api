@@ -7,14 +7,12 @@ const jimp = require("jimp");
 const { User } = userModel;
 
 const avatarsDir = path.join(__dirname, "../../", "public", "avatars");
-console.log("avatarsDir:", avatarsDir);
 
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
   const { path: tempUpload, originalname } = req.file;
   const filename = `${_id}_${originalname}`;
   const resultUpload = path.join(avatarsDir, filename);
-  console.log("updateAvatar   resultUpload:", resultUpload);
   const img = await jimp.read(tempUpload);
   await img.resize(250, jimp.AUTO).writeAsync(tempUpload);
   await fs.rename(tempUpload, resultUpload);
