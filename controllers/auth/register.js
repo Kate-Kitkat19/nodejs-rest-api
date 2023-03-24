@@ -2,6 +2,7 @@ const { userModel } = require("../../models");
 const { HttpError } = require("../../helpers");
 const { errorCatcher } = require("../../helpers");
 const bcrypt = require("bcrypt");
+const gravatar = require("gravatar");
 
 const { User } = userModel;
 const register = async (req, res, next) => {
@@ -11,14 +12,18 @@ const register = async (req, res, next) => {
     throw new HttpError(409, "Email in use");
   }
   const hashPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const avatarURL = gravatar.url(email);
+  console.log("register   userAvatar:", avatarURL);
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+    avatarURL,
+  });
   if (newUser) {
-    res
-      .status(201)
-      .json({
-        status: 201,
-        user: { email: newUser.email, subscription: newUser.subscription },
-      });
+    res.status(201).json({
+      status: 201,
+      user: { email: newUser.email, subscription: newUser.subscription },
+    });
   } else {
     throw HttpError(400, "Помилка від Joi або іншої бібліотеки валідації");
   }

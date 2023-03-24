@@ -1,7 +1,9 @@
 const contactControllers = require("./contacts");
-const userControllers = require("./auth");
+const loginControllers = require("./auth");
+const usersControllers = require("./users");
 
 module.exports = {
   contactControllers,
-  userControllers,
+  loginControllers,
+  usersControllers,
 };
