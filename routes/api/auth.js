@@ -3,8 +3,8 @@ const router = express.Router();
 const { validateBody, authentificate } = require("../../middlewares");
 const { userModel } = require("../../models");
 const { loginControllers } = require("../../controllers");
-const { register, login, logout, verifyEmail, resendVerification } =
-  loginControllers;
+const { register, login, logout } = loginControllers;
+const { verifyEmail, resendVerification } = require("../../services/email");
 
 const { signupSchema, signinSchema, emailSchema } = userModel;
 

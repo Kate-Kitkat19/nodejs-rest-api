@@ -3,9 +3,8 @@ const { HttpError, errorCatcher, sendEmail } = require("../../helpers");
 const bcrypt = require("bcrypt");
 const gravatar = require("gravatar");
 const { nanoid } = require("nanoid");
-
+const { emailBody } = require("../../services/email");
 const { User } = userModel;
-const { BASE_URL } = process.env;
 
 const register = async (req, res, next) => {
   const { email, password } = req.body;
@@ -23,13 +22,7 @@ const register = async (req, res, next) => {
     verificationToken,
   });
 
-  const verifyEmail = {
-    to: email,
-    subject: "Verify your email",
-    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationToken}">Click here to verify your email</a>`,
-  };
-
-  await sendEmail(verifyEmail);
+  await sendEmail(emailBody(email, verificationToken));
 
   if (newUser) {
     res.status(201).json({
